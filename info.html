@@ -63,8 +63,10 @@
       <h3>Live Airport Information</h3>
         <h4><span id="icao"></span> <span id="name"></span></h4>
         <hr>
-        <p>Live METAR: </p><pre id="raw"></pre>
+        <p>Live METAR: </p><h5 id="raw"></h5>
         <hr>
+        <div class="d-none">
+            <h5>Active Runway: <span id="runway"></span>.</h5>
         <div id="wind_block" class="d-none">
         <h5>Wind: <span id="wind_direction"></span> @ <span id="wind_speed"></span> knots.</h5>
         </div>    
@@ -75,11 +77,11 @@
           <h5>Temperature: <span id="temperature_celsius"></span> degrees.</h5>
           </div>
         <div id="cloud_block" class="d-none">
-        <h5>Clouds: <span id="cloud_list"></span></h5>
+        <h5>Clouds: <ul id="cloud_list"></ul></h5>
         </div>
         <div id="cond_block" class="d-none">
-        <h5> <span id="cond_list"></span></h5>
-        </div>
+        <h5>Conditions: <ul id="cond_list"></ul></h5>
+        </div> 
       </div>
     </body>
     <script>
@@ -90,7 +92,7 @@
         }
       });
     
-      // EGNX East Midlands Airport
+      // EGNX East Midlands Airport METAR
       xhr.open("GET", "https://api.checkwx.com/metar/EGNX/decoded");
       xhr.setRequestHeader("X-API-KEY", "a04a8e5eff55f4fb5bf508f0ff");
       xhr.send();
@@ -117,8 +119,8 @@
           if (metar.clouds) {
             document.getElementById('cloud_block').classList.remove("d-none");
             metar.clouds.forEach(cloud => {
-              var el = document.createElement('h5');
-              el.innerHTML = cloud.text + ' at ' + cloud.base_feet_agl + 'ft AGL. ';
+              var el = document.createElement('li');
+              el.innerHTML = cloud.text + ' at ' + cloud.feet + 'ft AGL. ';
               document.getElementById("cloud_list").appendChild(el);
             });
           }
@@ -147,7 +149,7 @@
             runway = "09";
         }
         else {
-            runway = "Winds allow for either runway.";
+            runway = "Winds allow for either runway";
         } } 
         document.getElementById("runway").innerHTML = runway;
       }
@@ -155,14 +157,12 @@
      </div> 
     <div class="card">
      <h3>Apron Layout</h3>
-     <img src="westapron.jpg" style="width:100%;max-width:380px">
+     <img src="westapron.jpeg" style="width:100%;max-width:380px">
      <img src="centralapron.jpg" style="width:100%;max-width:380px">
-     <img src="eastapron.jpg" style="width:100%;max-width:380px">
+     <img src="eastapron.jpeg" style="width:100%;max-width:380px">
     </div>    
     <div class="card">
     <h3>Runway Schedule</h3>
-    <p class="td"><h3><b>Runway currently in use:</b> <span id="runway"></span></h3>
-    <br>Runway in use automatically updated every 30 minutes.</p>
     <p>Heading down to the airport but don't know what runway
          is in use? This schedule will tell you the expected runway
          in use based on the weather forecast. Currently showing forecast for 29/06/2020 - 05/07/2020.</p>
@@ -231,3 +231,4 @@
           <script src="https://api.checkwx.com/widget?key=a04a8e5eff55f4fb5bf508f0ff" type="text/javascript"></script>
 </body>
 </html>
+
