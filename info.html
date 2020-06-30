@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Info</title>
+    <link rel="icon" href="icon.png">
+</head>
+<body style="background-color:rgb(210, 212, 214);">
+    <center><meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="stylesheetnav.css">
+    <body>
+    <div class="bar fixed white">
+        <div content="device-width"</div>
+      <div align="left"><a href="index.html"><img class="logo" src="site-logo.png" alt="East Midlands Spotting Guide"></a>   
+      <a href="index.html" class="bar-item button">Home</a>
+      <a href="info.html" class="bar-item button">Info</a>
+      <a href="spottinglocations.html" class="bar-item button">Spotting Locations</a>
+      <a href="news.html" class="bar-item button">News</a></div>
+    </div></center>
+    <!-- Main Website Body -->  
+    </body>
+    <style>
+    .card {
+        background-color: white;
+        padding: 20px;
+        padding-top: 2.5px;
+        margin-top: 20px;
+    }
+    </style>
+    <style>
+    .card2 {
+        background-color: white;
+        padding: 2.5px;
+        padding-top: 2.5px;
+        margin-top: 20px;
+        }
+        </style>
+      <style>
+        .checkwx-container {
+            background-color: white;
+            padding: 0px;
+            margin: 0;
+        }
+
+        .checkwx-item {
+            font-family: Arial, Helvetica, sans-serif;
+            -ms-text-size-adjust:100%;
+            -webkit-text-size-adjust:100%;
+            color: black;
+        }
+
+        .checkwx-link {
+            text-decoration-style: bold;
+            color: black;
+            -ms-text-size-adjust:100%;
+            -webkit-text-size-adjust:100%;
+            font-weight: bold;
+        }
+     </style>
+     <div class="card">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <h3>Live Airport Information</h3>
+        <h4><span id="icao"></span> <span id="name"></span></h4>
+        <hr>
+        <p>Live METAR: </p><pre id="raw"></pre>
+        <hr>
+        <div id="wind_block" class="d-none">
+        <h5>Wind: <span id="wind_direction"></span> @ <span id="wind_speed"></span> knots.</h5>
+        </div>    
+        <div id="visibility_block" class="d-none">
+        <h5>Visibility: <span id="visibility_miles"></span> miles.</h5>
+        </div>
+        <div id="temperature_block" class="d-none">
+          <h5>Temperature: <span id="temperature_celsius"></span> degrees.</h5>
+          </div>
+        <div id="cloud_block" class="d-none">
+        <h5>Clouds: <span id="cloud_list"></span></h5>
+        </div>
+        <div id="cond_block" class="d-none">
+        <h5> <span id="cond_list"></span></h5>
+        </div>
+      </div>
+    </body>
+    <script>
+      var xhr = new XMLHttpRequest();
+      xhr.addEventListener("readystatechange", function () {
+        if (this.readyState === 4) {
+          success(JSON.parse(this.responseText));
+        }
+      });
+    
+      // EGNX East Midlands Airport
+      xhr.open("GET", "https://api.checkwx.com/metar/EGNX/decoded");
+      xhr.setRequestHeader("X-API-KEY", "a04a8e5eff55f4fb5bf508f0ff");
+      xhr.send();
+    
+      function success(response) {
+        if (response.results > 0) {
+          var metar = response.data[0];
+    
+          document.getElementById('icao').innerText = metar.icao;
+          document.getElementById('name').innerText = metar.station.name;
+          document.getElementById('raw').innerText = metar.raw_text;
+    
+          if (metar.visibility) {
+            document.getElementById('visibility_miles').innerText = metar.visibility.miles;
+            document.getElementById('visibility_block').classList.remove("d-none");
+          }
+    
+          if (metar.wind) {
+            document.getElementById('wind_direction').innerText = metar.wind.degrees;
+            document.getElementById('wind_speed').innerText = metar.wind.speed_kts;
+            document.getElementById('wind_block').classList.remove("d-none");
+          }
+    
+          if (metar.clouds) {
+            document.getElementById('cloud_block').classList.remove("d-none");
+            metar.clouds.forEach(cloud => {
+              var el = document.createElement('h5');
+              el.innerHTML = cloud.text + ' at ' + cloud.base_feet_agl + 'ft AGL. ';
+              document.getElementById("cloud_list").appendChild(el);
+            });
+          }
+    
+          if (metar.conditions) {
+            document.getElementById('cond_block').classList.remove("d-none");
+            metar.conditions.forEach(cond => {
+              var el = document.createElement('li');
+              el.innerHTML = cond.text;
+              document.getElementById('cond_list').appendChild(el);
+            });
+          }
+          if (metar.temperature) {
+            document.getElementById('temperature_celsius').innerText = metar.temperature.celsius;
+            document.getElementById('temperature_block').classList.remove("d-none");
+          }
+        } else {
+          document.getElementById('raw').innerText = 'An error has occurred.'
+        }
+     {
+        document.getElementById('wind_direction').innerText = metar.wind.degrees;
+        if (metar.wind.degrees > 180 && metar.wind.degrees < 360) { 
+            runway = "27";
+        }
+        else if (metar.wind.degrees > 0 && metar.wind.degrees < 180) {
+            runway = "09";
+        }
+        else {
+            runway = "Winds allow for either runway.";
+        } } 
+        document.getElementById("runway").innerHTML = runway;
+      }
+    </script>
+     </div> 
+    <div class="card">
+     <h3>Apron Layout</h3>
+     <img src="westapron.jpg" style="width:100%;max-width:380px">
+     <img src="centralapron.jpg" style="width:100%;max-width:380px">
+     <img src="eastapron.jpg" style="width:100%;max-width:380px">
+    </div>    
+    <div class="card">
+    <h3>Runway Schedule</h3>
+    <p class="td"><h3><b>Runway currently in use:</b> <span id="runway"></span></h3>
+    <br>Runway in use automatically updated every 30 minutes.</p>
+    <p>Heading down to the airport but don't know what runway
+         is in use? This schedule will tell you the expected runway
+         in use based on the weather forecast. Currently showing forecast for 29/06/2020 - 05/07/2020.</p>
+         <style>
+            table {
+            width:100%;
+            }
+            table, th, td {
+            border: 0px solid rgb(255, 255, 255);
+            border-collapse: collapse;
+            }
+            th, td {
+            padding: 15px;
+            text-align: center;
+            }
+            tr:nth-child(even) {
+            background-color: #fff;
+            }
+            tr:nth-child(odd) {
+            background-color: rgb(255, 255, 255);
+            }
+            th {
+            background-color: rgb(255, 255, 255);
+            color: rgb(0, 0, 0);
+            }
+            @media only screen and (max-width: 480px) {
+            .tablemobile { 
+            overflow-x: auto;
+            display:block;
+          }}
+    </style>
+        <table class="tablemobile" style="width:100%">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+            <tr>
+              <th></th>
+              <th>Monday</th>
+              <th>Tuesday</th>
+              <th>Wednesday</th>
+              <th>Thursday</th>
+              <th>Friday</th>
+              <th>Saturday</th>
+              <th>Sunday</th>
+            </tr>
+            <tr>
+              <td>AM</td>
+              <td><img src="27.jpg" style="width:100%;max-width:85px"></td>
+              <td><img src="27.jpg" style="width:100%;max-width:85px"></td>
+              <td><img src="27.jpg" style="width:100%;max-width:85px"></td>
+              <td><img src="27.jpg" style="width:100%;max-width:85px"></td>
+              <td><img src="27.jpg" style="width:100%;max-width:85px"></td>
+              <td><img src="27.jpg" style="width:100%;max-width:85px"></td>
+              <td><img src="27.jpg" style="width:100%;max-width:85px"></td>
+            </tr>
+            <tr>
+              <td>PM</td>
+              <td><img src="27.jpg" style="width:100%;max-width:85px"></td>
+              <td><img src="27.jpg" style="width:100%;max-width:85px"></td>
+              <td><img src="27.jpg" style="width:100%;max-width:85px"></td>
+              <td><img src="27.jpg" style="width:100%;max-width:85px"></td>
+              <td><img src="27.jpg" style="width:100%;max-width:85px"></td>
+              <td><img src="27.jpg" style="width:100%;max-width:85px"></td>
+              <td><img src="27.jpg" style="width:100%;max-width:85px"></td>
+            </tr>
+          </table>
+    
+          <script src="https://api.checkwx.com/widget?key=a04a8e5eff55f4fb5bf508f0ff" type="text/javascript"></script>
+</body>
+</html>
